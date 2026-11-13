@@ -1,10 +1,10 @@
 """Build assets/strokes.json: stroke outlines and stroke order for the recently learned characters
-(lessonChars in assets/phrases.json), used by the 3.0 tracing game.
+used by the 3.0 tracing game: every character of the five levels (the 240 of 第4级总字表 + level5Chars in assets/phrases.json).
 
 Data: hanzi-writer-data (Make Me a Hanzi, Arphic Public License; see assets/ARPHICPL.TXT).
 Get it once:  npm pack hanzi-writer-data && tar xzf hanzi-writer-data-*.tgz
 Run from the project folder:  python3 tools/build_strokes.py path/to/package
-Add --all to include every character in the 字库 instead of only the recent ones.
+Add --all to include every character in the 字库 as well.
 """
 import json, os, sys
 
@@ -19,7 +19,8 @@ def main():
     folder = args[0]
     pdata = json.load(open(os.path.join(ASSETS, 'phrases.json'), encoding='utf-8'))
     cdata = json.load(open(os.path.join(ASSETS, 'characters.json'), encoding='utf-8'))
-    chars = ''.join(cdata['categories'].values()) if '--all' in sys.argv else pdata['lessonChars']
+    levels = ''.join(v for k, v in cdata['categories'].items() if k.startswith('第4级总字表')) + pdata.get('level5Chars', '')
+    chars = levels + (''.join(cdata['categories'].values()) if '--all' in sys.argv else '')
     out, missing = {}, []
     for c in dict.fromkeys(chars):
         path = os.path.join(folder, c + '.json')

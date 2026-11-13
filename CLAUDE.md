@@ -14,6 +14,6 @@ Project rules:
 - Words live in `assets/phrases.json` (two-character words only). Jimmy adds words there by hand; keep the one-entry-per-line layout (`tools/build_data.py` rewrites it).
 - The character bank is the characters from Jimmy's three photos plus the 超纲字 (`assets/characters.json` categories). Build words only from them; a new character in a word goes into 其他 when you run `python3 tools/build_data.py`. 超纲字 (categories 本册超纲字 and 其他) always show pinyin. `node tools/test_engine.js` checks that no word or puzzle goes outside the bank.
 - Recently learned characters are `lessonChars` in `assets/phrases.json` (the last 60 of the 第4级总字表, page 29). Puzzles favour them; change that string when the class moves on.
-- 3.0 is made of `lessonChars`; after changing that string, run `tools/build_strokes.py` (see its docstring) so every character has stroke data, and `tools/build_font.py` if new characters appear.
+- 3.0 has 5 levels: 1–4 are the 240 of 第4级总字表 in order (60 each), 5 is `level5Chars` in `assets/phrases.json` (第5级新增字表 70字). After changing the characters, run `tools/build_data.py`, `tools/build_strokes.py` (see its docstring) and `tools/build_font.py` so every character has pinyin, stroke data and font.
 - Keep word content kid-appropriate. No names or school details (public repo).
 - Bump `APP_VERSION` and add a `CHANGELOG` line in `js/app.js` for each user-visible change.

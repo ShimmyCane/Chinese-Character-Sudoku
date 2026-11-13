@@ -32,14 +32,14 @@ Games for two children (5 and 7) built on the characters they are learning, base
 - Simplified characters only (the stroke data is simplified).
 
 ## Shared
-- **Word list and bank:** the 字库 is 267 characters (three photos plus 超纲字). **Recently learned** = the last 60 characters of the 第4级总字表 (page 29): 1.0 and 2.0 favour them, 3.0 is made of them.
+- **Word list and bank:** the 字库 is 267 characters (three photos plus 超纲字). **Recently learned** = the last 60 characters of the 第4级总字表 (page 29): 1.0 and 2.0 favour them, 3.0 has five levels (picked in ⚙️): levels 1–4 are the 240 of the 第4级总字表 in order, 60 each (level 4 = the recent 60), level 5 is the 第5级新增字表 (70 characters, `level5Chars` in `assets/phrases.json`; they have pinyin and stroke data but are not in the word bank).
 - **超纲字** (outside the textbook lists) always show pinyin, even with the pinyin setting off.
 - **Calligraphy:** the characters in 1.0 and 2.0 use LXGW WenKai (霞鹜文楷), a Kai-style font, subset to the characters used and bundled. 3.0 draws stroke outlines from a Kai typeface.
 - ⭐ counts finished puzzles and characters. A win plays 一闪一闪亮晶晶 with confetti (Web Audio, no files).
 
 ## Settings (⚙️, lower right)
 
-Game version (links) · size (1.0) · lines (2.0) · mode · givens (1.0) · bank size · tracing hint (3.0) · pinyin · simplified/traditional · sound · add words (stored on this device) · word-bank stats · finished count · show errors · version and change log. Settings that don't apply to the current game are hidden.
+Game version (links) · size (1.0) · lines (2.0) · mode · givens (1.0) · bank size · tracing level and hint (3.0) · pinyin · simplified/traditional · sound · add words (stored on this device) · word-bank stats · finished count · show errors · version and change log. Settings that don't apply to the current game are hidden.
 
 ## Files
 

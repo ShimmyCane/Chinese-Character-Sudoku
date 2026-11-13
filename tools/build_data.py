@@ -47,7 +47,7 @@ def main():
     pdata['phrases'] = clean
 
     # Every character used anywhere gets a pinyin + traditional entry.
-    all_chars = ''.join(cdata['categories'].values()) + ''.join(clean)
+    all_chars = ''.join(cdata['categories'].values()) + ''.join(clean) + pdata.get('level5Chars', '')   # level 5 is for 3.0 only: pinyin, not in the bank
     missing = sorted({c for w in clean for c in w} - set(''.join(cdata['categories'].values())))
     if missing:
         cdata['categories']['其他'] = cdata['categories'].get('其他', '') + ''.join(missing)
