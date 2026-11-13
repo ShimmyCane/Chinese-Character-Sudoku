@@ -1,6 +1,7 @@
 // 汉字数独 — UI: board, drag-and-drop bank, settings, sounds, celebration.
-const APP_VERSION = '0.7.0';
+const APP_VERSION = '0.8.0';
 const CHANGELOG = [
+  ['0.8.0', '2026-11-13', '3.0 描红分成 5 个级别（⚙️ 里选）：第1到4级是第4级总字表240字按顺序每60个一级，第5级是第5级新增字表70字；每个级别的字单独练习、单独选字。'],
   ['0.1.0', '2026-10-27', '第一版：2×2 到 4×4；从字库拖字；简单（放对马上变绿）和挑战（最后检查）；拼音、繁体、加新词、撤销、答案、完成音乐。'],
   ['0.7.0', '2026-11-08', '3.0 描红：每一笔说出笔画名（横、竖、撇、捺…），🙋 帮忙 再说一遍；写完后可以「自己写一次」，没有任何提示。'],
   ['0.6.1', '2026-11-08', '3.0 描红的字一直标注拼音（不用打开 ⚙️ 拼音）。'],
@@ -23,7 +24,7 @@ const FALLBACK = {
   pool: '',
 };
 
-const DEFAULTS = { game: 'grid', lines: 3, traceGuide: true, readAloud: true, strokeNames: true, n: 2, easy: true, givensMany: true, decoysMany: true, pinyin: false, trad: false, sound: true, showErrors: false };
+const DEFAULTS = { game: 'grid', lines: 3, traceGuide: true, traceLevel: 4, readAloud: true, strokeNames: true, n: 2, easy: true, givensMany: true, decoysMany: true, pinyin: false, trad: false, sound: true, showErrors: false };
 const GAME_OF = { '#v1': 'grid', '#v2': 'lines', '#v3': 'trace' };
 const GAME_NO = { grid: 1, lines: 2, trace: 3 };
 const GAME_NOTES = {
@@ -72,7 +73,10 @@ async function loadData() {
   let data = null;
   try {
     const [p, c] = await Promise.all([fetchJson('assets/phrases.json'), fetchJson('assets/characters.json')]);
-    data = { lessonChars: p.lessonChars || '', phrases: p.phrases, version: p.version, chars: c.chars || {}, words: c.words || {}, pool: Object.values(c.categories || {}).join(''), extra: (c.categories['本册超纲字'] || '') + (c.categories['其他'] || '') };
+    const cats = c.categories || {};
+    const base = [...(Object.entries(cats).find(([k]) => k.startsWith('第4级总字表')) || ['', ''])[1]];   // 240 characters, in order
+    const levels = [0, 1, 2, 3].map(i => base.slice(i * 60, i * 60 + 60).join('')).concat(p.level5Chars || '');   // 3.0 levels 1-5
+    data = { levels, lessonChars: p.lessonChars || '', phrases: p.phrases, version: p.version, chars: c.chars || {}, words: c.words || {}, pool: Object.values(c.categories || {}).join(''), extra: (c.categories['本册超纲字'] || '') + (c.categories['其他'] || '') };
     save('data', data);
   } catch (e) {
     data = load('data', null);
@@ -459,7 +463,7 @@ function renderSettings() {
 }
 
 function setSetting(key, raw) {
-  const v = key === 'n' || key === 'lines' ? +raw : raw === '1';
+  const v = key === 'n' || key === 'lines' || key === 'traceLevel' ? +raw : raw === '1';
   if (S.settings[key] === v) return;
   S.settings[key] = v;
   save('settings', S.settings);

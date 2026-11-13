@@ -75,7 +75,10 @@ const Trace = (() => {
     }
     return !!T.strokes;
   }
-  const chars = () => [...S.lessonChars].filter(c => T.strokes && T.strokes[c]);
+  // 3.0 has 5 levels: 1-4 are the 240 of 第4级总字表 in order, 60 each; 5 is 第5级新增字表 (70). See S.data.levels.
+  const level = () => { const v = S.settings.traceLevel; return v >= 1 && v <= 5 ? v : 4; };
+  const levelSet = () => new Set((S.data.levels || [])[level() - 1] || '');
+  const chars = () => { const ls = (S.data.levels || [])[level() - 1] || ''; return [...ls].filter(c => T.strokes && T.strokes[c]); };
   // Stroke name for stroke i of the current character, e.g. 横 竖 撇 捺 点 提 折 钩 (shape-based, see engine.js).
   const nameOf = i => (T.cur && T.strokes[T.cur] && T.strokes[T.cur].medians[i]) ? Engine.strokeName(T.strokes[T.cur].medians[i]) : '';
   const names = () => S.settings.strokeNames !== false;
@@ -199,7 +202,7 @@ const Trace = (() => {
     el('tracePy').textContent = (S.data.chars[c] || [''])[0];
     el('traceCount').textContent = `${T.n} 笔`;
     el('traceWords').innerHTML = exampleWords(c).map(wordChip).join('');
-    el('levelTag').textContent = T.solo ? '描红 · 自己写' : `描红 · 提示${guide() ? '开' : '关'}`;
+    el('levelTag').textContent = T.solo ? `描红 · 第${level()}级 · 自己写` : `描红 · 第${level()}级 · 提示${guide() ? '开' : '关'}`;
     ['traceSay', 'traceHint', 'traceHelp'].forEach(id => { el(id).hidden = T.solo; });
   }
 
@@ -282,7 +285,7 @@ const Trace = (() => {
     if (!(await ensureData())) { say('笔顺数据没读到，请联网后再试'); return; }
     if (!chars().length) { say('没有可以描红的字'); return; }
     try {
-      if (!T.cur || !T.strokes[T.cur] || !S.lessonChars.has(T.cur)) { T.cur = null; await setChar(pickNext()); }
+      if (!T.cur || !T.strokes[T.cur] || !levelSet().has(T.cur)) { T.cur = null; await setChar(pickNext()); }
       else { ensureWriter(); renderInfo(); renderPicker(); startQuiz(); }
     } catch (e) { logError('描红出错', e); say('描红出错了，打开 ⚙️ 显示错误看看'); }
   }
@@ -297,6 +300,7 @@ const Trace = (() => {
   // Settings that change what the card shows; only turning the hint on or off starts the character over.
   function refresh(key) {
     if (key === 'readAloud' && !S.settings.readAloud) Say.cancel();
+    if (key === 'traceLevel' && T.shown && !T.busy) { T.cur = null; show(); return; }
     if (!T.shown || !T.cur) return;
     renderInfo();
     if (key === 'traceGuide' && !T.busy) startQuiz();

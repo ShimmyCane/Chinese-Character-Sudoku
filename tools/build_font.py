@@ -21,7 +21,7 @@ UI_CHARS = '汉字数独太棒了！描红笔顺'
 def needed_chars(extra):
     cdata = json.load(open(os.path.join(ASSETS, 'characters.json'), encoding='utf-8'))
     pdata = json.load(open(os.path.join(ASSETS, 'phrases.json'), encoding='utf-8'))
-    chars = set(''.join(cdata['categories'].values())) | set(''.join(pdata['phrases']))
+    chars = set(''.join(cdata['categories'].values())) | set(''.join(pdata['phrases'])) | set(pdata.get('level5Chars', ''))
     chars |= {t for _, t in cdata['chars'].values() for t in t}          # traditional forms
     chars |= {c for _, t in cdata.get('words', {}).values() for c in t}   # word-specific traditional forms
     chars |= set(UI_CHARS) | set(extra)
